@@ -10,5 +10,5 @@ This is a Demo App for CCF.
 
 #Download
 
-<a href='/app-debug.apk' target='_blank' align="right">Download APK</a>
+<a href='https://drive.google.com/file/d/1SqFTwLMm7Fb-3qbxmPC95IMC6kzfpAGD/view?usp=sharing' target='_blank' align="right">Download APK</a>
 
