@@ -5,6 +5,7 @@ import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -16,85 +17,97 @@ import java.util.ArrayList;
 
 import ccf.android.com.util.BasicCallBack;
 import ccf.android.com.R;
-import ccf.android.com.threadUnit.ThreadUnit;
+import ccf.android.com.adapters.PostUnit;
 import ccf.android.com.network.BaseCustomAsyncClass;
+import ccf.android.com.util.Urls;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
-    public static String serverUrl = "https://d2gn4xht817m0g.cloudfront.net/conversation_message_attachment/i/332414-1df90f2ae6ef88c6e4a4d9b22e43e476-original?1518691958";
-    TextView letStart;
     String responseString = null;
-    public static ArrayList<ThreadUnit> arrayList;
+    public static ArrayList<PostUnit> arrayList;
+    BasicCallBack onResponseCallBack;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        final TextView letStart = (TextView) findViewById(R.id.start);
+        final Button retry = (Button) findViewById(R.id.retry);
 
-        letStart = (TextView) findViewById(R.id.start);
+        letStart.setOnClickListener(this);
+        retry.setOnClickListener(this);
 
-        letStart.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (responseString!=null){
-                    Intent intent = new Intent(MainActivity.this, ThreadActivity.class);
-                    intent.putExtra("response", responseString);
-                    startActivity(intent);
-                }else {
-                    Toast.makeText(MainActivity.this, "Please wait", Toast.LENGTH_SHORT).show();
-                }
-
-            }
-        });
-
-
-        BasicCallBack basicCallBack = new BasicCallBack() {
+        onResponseCallBack = new BasicCallBack() {
             @Override
             public void callBack(int status, Object data) {
-                responseString = data.toString();
-                JSONObject response = (JSONObject) data;
-                response.optString("null");
-                JSONArray posts = new JSONArray();
-                posts = response.optJSONObject("data").optJSONArray("posts");
+                if (status == 0) {
+                    responseString = data.toString();
+                    JSONObject response = (JSONObject) data;
+                    response.optString("null");
+                    JSONArray posts = new JSONArray();
+                    posts = response.optJSONObject("data").optJSONArray("posts");
 
-                arrayList = new ArrayList<>();
-                for (int i = 0; i < posts.length(); i++) {
-                    ThreadUnit threadUnit = new ThreadUnit();
-                    long date = 0;
-                    String avatar = null;
-                    String body = null;
-                    String username = null;
-                    String image = null;
-                    try {
-                        date = response.getJSONObject("data").optJSONArray("posts").optJSONObject(i).optLong("post_date");
-                        avatar = response.getJSONObject("data").optJSONArray("posts").optJSONObject(i).optString("avatar");
-                        username = response.getJSONObject("data").optJSONArray("posts").optJSONObject(i).optString("username");
-                        body = response.getJSONObject("data").optJSONArray("posts").optJSONObject(i).optString("message");
-                        JSONArray attachments = response.getJSONObject("data").optJSONArray("posts").optJSONObject(i).optJSONArray("attachments");
-                        if (date != 0)
-                            threadUnit.setDate(date);
-                        if (avatar != null)
-                            threadUnit.setPostAvatar(avatar);
-                        if (body != null)
-                            threadUnit.setPostBody(body);
-                        if(username!=null)
-                            threadUnit.setUsername(username);
+                    arrayList = new ArrayList<>();
+                    for (int i = 0; i < posts.length(); i++) {
+                        PostUnit postUnit = new PostUnit();
+                        long date = 0;
+                        String avatar = null;
+                        String body = null;
+                        String username = null;
+                        String image = null;
+                        try {
+                            date = response.getJSONObject("data").optJSONArray("posts").optJSONObject(i).optLong("post_date");
+                            avatar = response.getJSONObject("data").optJSONArray("posts").optJSONObject(i).optString("avatar");
+                            username = response.getJSONObject("data").optJSONArray("posts").optJSONObject(i).optString("username");
+                            body = response.getJSONObject("data").optJSONArray("posts").optJSONObject(i).optString("message");
+                            JSONArray attachments = response.getJSONObject("data").optJSONArray("posts").optJSONObject(i).optJSONArray("attachments");
+                            if (date != 0)
+                                postUnit.setDate(date);
+                            if (avatar != null)
+                                postUnit.setPostAvatar(avatar);
+                            if (body != null)
+                                postUnit.setPostBody(body);
+                            if (username != null)
+                                postUnit.setUsername(username);
 
 
-                    } catch (JSONException e) {
-                        e.printStackTrace();
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                        arrayList.add(postUnit);
+
                     }
-                    arrayList.add(threadUnit);
+                    letStart.setText("Fetched (Click Here)");
 
+                } else {
+                    retry.setVisibility(View.VISIBLE);
+                    Toast.makeText(MainActivity.this, "Please check your Internet Connection", Toast.LENGTH_SHORT).show();
                 }
-                letStart.setText("Fetched (Click Here)");
-
             }
+
         };
 
-        BaseCustomAsyncClass baseCustomAsyncClass = new BaseCustomAsyncClass(basicCallBack, serverUrl);
+        BaseCustomAsyncClass baseCustomAsyncClass = new BaseCustomAsyncClass(onResponseCallBack, Urls.serverUrl);
         baseCustomAsyncClass.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, null, null, null);
 
 
+    }
+
+    @Override
+    public void onClick(View view) {
+        if (view.getId() == R.id.start) {
+            if (responseString != null) {
+                Intent intent = new Intent(MainActivity.this, PostActivity.class);
+                intent.putExtra("response", responseString);
+                startActivity(intent);
+            } else {
+                Toast.makeText(MainActivity.this, "Please wait", Toast.LENGTH_SHORT).show();
+            }
+        } else if (view.getId() == R.id.retry) {
+            BaseCustomAsyncClass baseCustomAsyncClass = new BaseCustomAsyncClass(onResponseCallBack, Urls.serverUrl);
+            baseCustomAsyncClass.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, null, null, null);
+
+
+        }
     }
 }

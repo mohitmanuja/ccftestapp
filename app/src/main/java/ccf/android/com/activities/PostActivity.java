@@ -14,10 +14,10 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import ccf.android.com.R;
-import ccf.android.com.threadUnit.ThreadViewAdapter;
+import ccf.android.com.adapters.PostViewAdapter;
 import ccf.android.com.util.Util;
 
-public class ThreadActivity extends AppCompatActivity {
+public class PostActivity extends AppCompatActivity {
 
 
     String response;
@@ -28,10 +28,9 @@ public class ThreadActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_thread);
-
+        setContentView(R.layout.activity_post);
+        Util.setContext(this);
         threadAvatar = findViewById(R.id.user_profile);
-
         response = getIntent().getStringExtra("response");
         try {
             responseJson = new JSONObject(response);
@@ -50,7 +49,7 @@ public class ThreadActivity extends AppCompatActivity {
         dateText.setText(Util.getDate(date));
 
         threadRecyclerView = findViewById(R.id.recycler_view);
-        ThreadViewAdapter threadViewAdapter = new ThreadViewAdapter(this, MainActivity.arrayList);
+        PostViewAdapter threadViewAdapter = new PostViewAdapter(this, MainActivity.arrayList);
         threadRecyclerView.setAdapter(threadViewAdapter);
         threadRecyclerView.setLayoutManager(new LinearLayoutManager(this));
 

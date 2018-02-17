@@ -1,4 +1,4 @@
-package ccf.android.com.threadUnit;
+package ccf.android.com.adapters;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -7,7 +7,7 @@ import java.util.Date;
  * Created by admin on 15/02/18.
  */
 
-public class ThreadUnit {
+public class PostUnit {
     public String getUsername() {
         return username;
     }
