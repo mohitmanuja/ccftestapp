@@ -15,9 +15,9 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 
+import ccf.android.com.model.PostUnit;
 import ccf.android.com.util.BasicCallBack;
 import ccf.android.com.R;
-import ccf.android.com.adapters.PostUnit;
 import ccf.android.com.network.BaseCustomAsyncClass;
 import ccf.android.com.util.Urls;
 
@@ -106,7 +106,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         } else if (view.getId() == R.id.retry) {
             BaseCustomAsyncClass baseCustomAsyncClass = new BaseCustomAsyncClass(onResponseCallBack, Urls.serverUrl);
             baseCustomAsyncClass.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, null, null, null);
-
 
         }
     }

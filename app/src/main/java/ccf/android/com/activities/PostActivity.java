@@ -2,6 +2,7 @@ package ccf.android.com.activities;
 
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.widget.ImageView;
@@ -50,9 +51,10 @@ public class PostActivity extends AppCompatActivity {
 
         threadRecyclerView = findViewById(R.id.recycler_view);
         PostViewAdapter threadViewAdapter = new PostViewAdapter(this, MainActivity.arrayList);
-        threadRecyclerView.setAdapter(threadViewAdapter);
         threadRecyclerView.setLayoutManager(new LinearLayoutManager(this));
 
+        threadRecyclerView.setLayoutManager(new GridLayoutManager(this, 2));
+        threadRecyclerView.setAdapter(threadViewAdapter);
 
 
     }

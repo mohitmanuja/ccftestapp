@@ -9,6 +9,7 @@ import android.view.ViewGroup;
 import java.util.ArrayList;
 
 import ccf.android.com.R;
+import ccf.android.com.model.PostUnit;
 import ccf.android.com.viewHolders.PostViewHolder;
 
 /**
